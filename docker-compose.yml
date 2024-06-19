@@ -52,30 +52,40 @@ services:
     networks:
       - hadoop
 
-  spark-master:
-    image: bde2020/spark-master
-    container_name: spark-master
+  hive:
+    image: bde2020/hive
+    container_name: hive
     ports:
-      - "8080:8080"
-      - "7077:7077"
+      - "10000:10000"
+      - "10002:10002"
     environment:
-      - SPARK_MODE=master
-      - SPARK_MASTER_PORT=7077
-      - SPARK_MASTER_WEBUI_PORT=8080
+      - HIVE_CONF_hive_metastore_uris=thrift://hive-metastore:9083
+      - HIVE_CONF_hive_metastore_warehouse_dir=/user/hive/warehouse
       - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
+      - HIVE_METASTORE_HOST=hive-metastore-postgresql
+      - HIVE_METASTORE_PORT=5432
+      - HIVE_METASTORE_DB=metastore
+      - HIVE_METASTORE_USER=hive
+      - HIVE_METASTORE_PASSWORD=hive
+    depends_on:
+      - namenode
+      - datanode
+      - resourcemanager
+      - nodemanager
+      - hive-metastore-postgresql
     networks:
       - hadoop
 
-  spark-worker:
-    image: bde2020/spark-worker
-    container_name: spark-worker
-    ports:
-      - "8081:8081"
+  hive-metastore-postgresql:
+    image: postgres:12
+    container_name: hive-metastore-postgresql
     environment:
-      - SPARK_MODE=worker
-      - SPARK_MASTER=spark://spark-master:7077
-      - SPARK_WORKER_WEBUI_PORT=8081
-      - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
+      - POSTGRES_DB=metastore
+      - POSTGRES_USER=hive
+      - POSTGRES_PASSWORD=hive
+    volumes:
+      - hive-metastore-postgresql:/var/lib/postgresql/data
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
     networks:
       - hadoop
 
@@ -90,6 +100,7 @@ services:
 volumes:
   namenode:
   datanode:
+  hive-metastore-postgresql:
 
 networks:
   hadoop:
