@@ -52,6 +52,41 @@ services:
     networks:
       - hadoop
 
+  spark-master:
+    image: bde2020/spark-master
+    container_name: spark-master
+    ports:
+      - "8080:8080"
+      - "7077:7077"
+    environment:
+      - SPARK_MODE=master
+      - SPARK_MASTER_PORT=7077
+      - SPARK_MASTER_WEBUI_PORT=8080
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
+    networks:
+      - hadoop
+
+  spark-worker:
+    image: bde2020/spark-worker
+    container_name: spark-worker
+    ports:
+      - "8081:8081"
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER=spark://spark-master:7077
+      - SPARK_WORKER_WEBUI_PORT=8081
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
+    networks:
+      - hadoop
+
+  pig:
+    image: fluddeni/hadoop-pig
+    container_name: pig
+    environment:
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
+    networks:
+      - hadoop
+
 volumes:
   namenode:
   datanode:
