@@ -1,0 +1,9 @@
+hdfs dfs -cat /user/hadoop/input/charlie_trace-1_17571657100049929577.branch_trace.1006511.csv | wc -l
+hdfs dfs -cat /user/hadoop/input/delta_trace-1_10058381926338669845.branch_trace.507251.csv | wc -l
+hdfs dfs -cat /user/hadoop/input/merced_trace-1_13378400607429273214.branch_trace.467769.csv | wc -l
+hdfs dfs -cat /user/hadoop/input/whiskey_trace-1_1748052322638680856.branch_trace.426708.csv | wc -l
+
+charlie_trace-1_17571657100049929577.branch_trace.1006511.csv
+delta_trace-1_10058381926338669845.branch_trace.507251.csv
+merced_trace-1_13378400607429273214.branch_trace.467769.csv
+whiskey_trace-1_1748052322638680856.branch_trace.426708.csv
